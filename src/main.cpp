@@ -1,4 +1,5 @@
-#include <SDL3/SDL.h>
+#include <SDL.h>
+#include <SDL_mixer.h>
 #include <iostream>
 #include <stdio.h>
 
@@ -6,6 +7,8 @@ SDL_Surface* Background = NULL;
 SDL_Surface* Sprite = NULL;
 SDL_Surface* Backbuffer = NULL;
 SDL_Window* Window = NULL;
+
+Mix_Chunk *chuck;
 
 bool ProgramIsRunning();
 bool LoadImages();
@@ -37,6 +40,15 @@ int main(int argc, char* args[])
 
     SDL_BlitSurface(Background, NULL, Backbuffer, NULL );
 
+    //Initialize SDL_mixer
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) < 0 )
+    {
+        printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+    }
+
+    chuck = Mix_LoadWAV("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
+    std::cout << " YO " << Mix_PlayChannel( -1, chuck, -1 ) << std::endl;
+
     while(ProgramIsRunning())
     {
         SDL_Rect spritePos;
@@ -50,6 +62,7 @@ int main(int argc, char* args[])
         SDL_Delay(100);
     }
 
+    Mix_FreeChunk(chuck);
     SDL_DestroyWindow(Window);
     SDL_Quit();
 
@@ -90,13 +103,13 @@ void FreeImages()
 {
     if(Background != NULL)
     {
-        SDL_DestroySurface(Background);
+        SDL_FreeSurface(Background);
         Background = NULL;
     }
 
     if(Sprite != NULL)
     {
-        SDL_DestroySurface(Sprite);
+        SDL_FreeSurface(Sprite);
         Sprite = NULL;
     }
 }

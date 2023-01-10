@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include <SDL_ttf.h>
 #include <iostream>
 #include <stdio.h>
 
@@ -8,7 +9,11 @@ SDL_Surface* Sprite = NULL;
 SDL_Surface* Backbuffer = NULL;
 SDL_Window* Window = NULL;
 
+// Sounds
 Mix_Chunk *chuck;
+
+//Font
+TTF_Font *GameFont = NULL;
 
 bool ProgramIsRunning();
 bool LoadImages();
@@ -49,6 +54,15 @@ int main(int argc, char* args[])
     chuck = Mix_LoadWAV("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
     std::cout << " YO " << Mix_PlayChannel( -1, chuck, -1 ) << std::endl;
 
+    //Init TTF subsystem
+    if(TTF_Init() == -1)
+    {
+        return 0;
+    }
+
+    // init SDL_ttf
+    GameFont = TTF_OpenFont("assets/fonts/alfphabet.ttf", 30);
+
     while(ProgramIsRunning())
     {
         SDL_Rect spritePos;
@@ -57,12 +71,36 @@ int main(int argc, char* args[])
 
         SDL_BlitSurface(Sprite, NULL, Backbuffer, &spritePos);
 
+        // Render Font
+        SDL_Surface* renderedText = NULL;
+
+        SDL_Color color;
+
+        color.r = 255u;
+        color.g = 255u;
+        color.b = 255u;
+
+        renderedText = TTF_RenderText_Solid( GameFont, "Yoooooo!!!!!!!!!", color );
+
+        SDL_Rect pos;
+
+        pos.x = 100;
+        pos.y = 100;
+
+        SDL_BlitSurface( renderedText, NULL, Backbuffer, &pos );
+        SDL_FreeSurface(renderedText);
+        // End
+
         SDL_UpdateWindowSurface(Window);
 
         SDL_Delay(100);
     }
 
+    //Free font
+    TTF_CloseFont(GameFont);
+
     Mix_FreeChunk(chuck);
+
     SDL_DestroyWindow(Window);
     SDL_Quit();
 

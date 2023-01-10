@@ -6,6 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY $<1:${CMAKE_SOURCE_DIR}/dist/${CMAKE_SYSTEM_N
 set(ASSETS_DIR_NAME assets)
 
 set(BUILD_SHARED_LIBS           FALSE)
+
 set(SDL2MIXER_VENDORED          TRUE)
 set(SDL2MIXER_WAVE              TRUE)
 set(SDL2MIXER_OPUS              FALSE)
@@ -14,8 +15,11 @@ set(SDL2MIXER_MOD_XMP           FALSE)
 set(SDL2MIXER_MOD               FALSE)
 set(SDL2MIXER_MIDI_FLUIDSYNTH   FALSE)
 
+set(SDL2TTF_VENDORED            TRUE)
+
 add_subdirectory(external/SDL)
 add_subdirectory(external/SDL_mixer)
+add_subdirectory(external/SDL_ttf)
 
 file(GLOB_RECURSE SRC_SOURCES src/*.c*)
 file(GLOB_RECURSE SRC_HEADERS src/*.h*)
@@ -27,6 +31,7 @@ target_link_libraries(${PROJECT_NAME}
     SDL2-static
     SDL2main
     SDL2_mixer
+    SDL2_ttf
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -34,6 +39,7 @@ target_include_directories(${PROJECT_NAME}
     SDL2-static
     SDL2main
     SDL2_mixer
+    SDL2_ttf
 )
 
 if (DEFINED ASSETS_DIR_NAME)

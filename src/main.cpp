@@ -45,22 +45,24 @@ int main(int argc, char* args[])
 
     SDL_BlitSurface(Background, NULL, Backbuffer, NULL );
 
-    //Initialize SDL_mixer
+    // intit SDL_mixer
     if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 4096 ) < 0 )
     {
         printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
     }
 
+    // load sound
     chuck = Mix_LoadWAV("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
-    std::cout << " YO " << Mix_PlayChannel( -1, chuck, -1 ) << std::endl;
+    // play sound
+    Mix_PlayChannel( -1, chuck, -1 );
 
-    //Init TTF subsystem
+    // init TTF subsystem
     if(TTF_Init() == -1)
     {
         return 0;
     }
 
-    // init SDL_ttf
+    // load font
     GameFont = TTF_OpenFont("assets/fonts/alfphabet.ttf", 30);
 
     while(ProgramIsRunning())

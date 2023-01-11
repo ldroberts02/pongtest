@@ -20,6 +20,7 @@ set(SDL2TTF_VENDORED            TRUE)
 add_subdirectory(external/SDL)
 add_subdirectory(external/SDL_mixer)
 add_subdirectory(external/SDL_ttf)
+add_subdirectory(external/SDL_image)
 
 file(GLOB_RECURSE SRC_SOURCES src/*.c*)
 file(GLOB_RECURSE SRC_HEADERS src/*.h*)
@@ -32,6 +33,7 @@ target_link_libraries(${PROJECT_NAME}
     SDL2main
     SDL2_mixer
     SDL2_ttf
+    SDL2_image
 )
 
 target_include_directories(${PROJECT_NAME}
@@ -40,6 +42,7 @@ target_include_directories(${PROJECT_NAME}
     SDL2main
     SDL2_mixer
     SDL2_ttf
+    SDL2_image
 )
 
 if (DEFINED ASSETS_DIR_NAME)

@@ -1,3 +1,6 @@
+Pong Game Test for class
+
+
 git clone --recursive https://github.com/EricWRogers/bamgp-project-template.git -or- git clone --recursive git@github.com:EricWRogers/bamgp-project-template.git
 
 Tested

@@ -11,6 +11,7 @@ const int SCREEN_HEIGHT = 800;
 
 SDL_Window *window = nullptr;
 SDL_Surface *sprite = nullptr;
+SDL_Surface *spriteball =nullptr;
 SDL_Surface *backGroundImage = nullptr;
 SDL_Surface *backBuffer = nullptr;
 
@@ -226,7 +227,7 @@ bool LoadFiles()
     // load images
     backGroundImage = LoadImage("assets/graphics/background.bmp");
     sprite = LoadImage("assets/graphics/paddle.bmp");
-    //sprite = LoadImage("assets/graphics/ball.bmp");
+    spriteball = LoadImage("assets/graphics/ball.bmp");
 
     if(sprite == nullptr)
         return false;

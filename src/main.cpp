@@ -16,6 +16,7 @@ SDL_Surface *backGroundImage = nullptr;
 SDL_Surface *backBuffer = nullptr;
 
 Mix_Chunk *hitSound = nullptr;
+Mix_Music *backGroundMusic = nullptr;
 
 TTF_Font *gameFont = nullptr;
 
@@ -26,6 +27,11 @@ float movementSpeed = 10.0f;
 float paddleXVel = 1.0f;
 float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
+
+
+float spriteballXVel = 1.0f;
+float spriteballYVel = 1.0f;
+float spriteballMovementSpeed = 10.0f;
 
 SDL_Rect paddleRect;
 SDL_Rect ballRect;
@@ -82,7 +88,9 @@ int main(int argc, char* args[])
     if (LoadFiles()) {
 
         //play sound
-        Mix_PlayChannel(-1,hitSound,-1);
+        //Mix_PlayChannel(-1,hitSound,0);
+        Mix_PlayMusic(backGroundMusic, -1);
+
 
         while(ProgramIsRunning())
         {
@@ -235,6 +243,8 @@ bool LoadFiles()
     if(backGroundImage == nullptr)
         return false;
     
+    if(spriteball == nullptr)
+        return false;
     // load font
     gameFont = TTF_OpenFont("assets/fonts/alfphabet.ttf", 30);
 
@@ -248,6 +258,9 @@ bool LoadFiles()
 
     if(hitSound == nullptr)
         return false;
+    //load music
+    backGroundMusic = Mix_LoadMUS("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
+    if (backGroundMusic == nullptr)
 
     return true;
 }
@@ -276,6 +289,9 @@ void FreeFiles()
         Mix_FreeChunk(hitSound);
         hitSound = nullptr;
     }
+    if (backGroundMusic != nullptr)
+    Mix_FreeMusic(backGroundMusic);
+    backGroundMusic = nullptr;
 }
 
 void DrawText(SDL_Surface* surface, const char* string, int x, int y, TTF_Font* font, Uint8 r, Uint8 g, Uint8 b)

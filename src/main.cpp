@@ -92,9 +92,9 @@ int main(int argc, char* args[])
             SDL_BlitSurface(backGroundImage, NULL, backBuffer, NULL);
 
             // draw the image
-            //paddleRect.x = (paddleRect.x + (paddleRect.w/2.0f) < SCREEN_WIDTH) ? (paddleRect.x + (inputDirectionX * movementSpeed)) : -(paddleRect.w/2.0f) + 1;
-            //paddleRect.x = (paddleRect.x > -(paddleRect.w/2.0f)) ? paddleRect.x : SCREEN_WIDTH - (paddleRect.w/2.0f) - 1;
             paddleRect.x = (paddleRect.x + (inputDirectionX * movementSpeed));
+            paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
+            paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
 
             //paddleRect.x = (SCREEN_WIDTH / 2);
             paddleRect.y = (SCREEN_HEIGHT - 48); // paddle does not need to move vertically, so this is used instead of the old code

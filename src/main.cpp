@@ -3,6 +3,9 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <stdio.h>
+#include <string>
+using namespace std;
+
 
 const int FPS = 60;
 const int FRAME_DELAY = 1000/FPS;
@@ -28,6 +31,7 @@ float paddleXVel = 1.0f;
 float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
 
+int intScore = 0;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
@@ -47,7 +51,7 @@ bool RectsOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 int main(int argc, char* args[])
 {
-    std::cout << "Hello World" << std::endl;
+    std::cout << "ALT GIVES POINTS RIGHT NOW, CHANGE LATER" << std::endl;
 
     paddleRect.x = (SCREEN_WIDTH / 3);
     //paddleRect.y = 250;
@@ -104,7 +108,6 @@ int main(int argc, char* args[])
             paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
             paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
 
-            //paddleRect.x = (SCREEN_WIDTH / 2);
             paddleRect.y = (SCREEN_HEIGHT - 48); // paddle does not need to move vertically, so this is used instead of the old code
 
             /*paddleRect.y = (paddleRect.y + (paddleRect.h/2.0f) < SCREEN_HEIGHT) ? (paddleRect.y + (inputDirectionY * movementSpeed)) : -(paddleRect.h/2.0f) + 1;
@@ -115,8 +118,11 @@ int main(int argc, char* args[])
 
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
-            // font
-            DrawText(backBuffer, "Demo", 100, 100, gameFont, 255u, 255u, 255u);
+            DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
+
+            // text stuff
+            std::string stringscore = "Score: " + std::to_string(intScore);
+            DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
 
             // end draw frame
             SDL_UpdateWindowSurface(window);
@@ -174,6 +180,9 @@ bool ProgramIsRunning()
     
     if (keys[SDL_SCANCODE_RIGHT])
         inputDirectionX = 1.0f;
+
+    if (keys[SDL_SCANCODE_LALT])
+        intScore ++;
     
     //if (keys[SDL_SCANCODE_UP])
     //    inputDirectionY = -1.0f;

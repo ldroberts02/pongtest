@@ -32,6 +32,8 @@ float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
 
 int intScore = 0;
+int intscoresegment = 0;
+float floatScore = 0.0f;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
@@ -40,6 +42,7 @@ float spriteballMovementSpeed = 10.0f;
 SDL_Rect paddleRect;
 SDL_Rect ballRect;
 
+bool noInput = true;
 bool LoadFiles();
 void FreeFiles();
 bool ProgramIsRunning();
@@ -51,7 +54,7 @@ bool RectsOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 int main(int argc, char* args[])
 {
-    std::cout << "ALT GIVES POINTS RIGHT NOW, CHANGE LATER" << std::endl; //prints to terminal
+    std::cout << "test" << std::endl; //prints to terminal
 
     paddleRect.x = (SCREEN_WIDTH / 3);
     paddleRect.w = 128;
@@ -59,8 +62,8 @@ int main(int argc, char* args[])
 
     ballRect.x = (SCREEN_WIDTH /2);
     ballRect.y = (SCREEN_HEIGHT / 2);
-    ballRect.w = 32;
-    ballRect.h = 32;
+    ballRect.w = 20;
+    ballRect.h = 20;
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) //default initialization stuff
     {
@@ -107,12 +110,15 @@ int main(int argc, char* args[])
             paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
             paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
 
-            paddleRect.y = (SCREEN_HEIGHT - 48); // paddle does not need to move vertically, so this is used instead
+            paddleRect.y = (SCREEN_HEIGHT - 32); // paddle does not need to move vertically, so this is used instead
 
-            /*paddleRect.y = (paddleRect.y + (paddleRect.h/2.0f) < SCREEN_HEIGHT) ? (paddleRect.y + (inputDirectionY * movementSpeed)) : -(paddleRect.h/2.0f) + 1;
-            paddleRect.y = (paddleRect.y > -(paddleRect.h/2.0f)) ? paddleRect.y : SCREEN_HEIGHT - (paddleRect.h/2.0f) - 1; */
+            ballRect.x = (ballRect.x +  spriteballXVel);
+            ballRect.y = (ballRect.y +  spriteballYVel);
+
+
             //ballRect.x = (paddleRect.x);
             //ballRect.y = (paddleRect.y - 200);
+
             DrawImage(sprite, backBuffer, paddleRect.x, paddleRect.y);
 
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
@@ -124,7 +130,7 @@ int main(int argc, char* args[])
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
             // text rendering stuff
-            std::string stringscore = "Score: " + std::to_string(intScore);
+            std::string stringscore = "Score: " + std::to_string(intScore) + " BallVelX " + std::to_string(spriteballXVel);
             DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
 
             // end drawing frame
@@ -180,18 +186,21 @@ bool ProgramIsRunning()
 
     if (keys[SDL_SCANCODE_LEFT])
         inputDirectionX = -1.0f;
-    
+
+
     if (keys[SDL_SCANCODE_RIGHT])
         inputDirectionX = 1.0f;
 
-    if (keys[SDL_SCANCODE_LALT])
-        intScore ++;
     
-    //if (keys[SDL_SCANCODE_UP])
-    //    inputDirectionY = -1.0f;
-    
-    //if (keys[SDL_SCANCODE_DOWN])
-    //    inputDirectionY = 1.0f;
+    if (keys[SDL_SCANCODE_RETURN])
+        noInput = !noInput;
+
+    floatScore ++;
+    intScore = floatScore / 60 ;
+
+  //  while(noInput){
+  //      paddleRect.x = ballRect.x; //this code crashes the game, ask why later
+  //  }
 
     while (SDL_PollEvent(&event))
     {

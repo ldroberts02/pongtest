@@ -37,7 +37,7 @@ float floatScore = 0.0f;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
-float spriteballMovementSpeed = 10.0f;
+float spriteballMovementSpeed = 2.0f;
 
 SDL_Rect paddleRect;
 SDL_Rect ballRect;
@@ -112,8 +112,8 @@ int main(int argc, char* args[])
 
             paddleRect.y = (SCREEN_HEIGHT - 32); // paddle does not need to move vertically, so this is used instead
 
-            ballRect.x = (ballRect.x +  spriteballXVel);
-            ballRect.y = (ballRect.y +  spriteballYVel);
+            ballRect.x = (ballRect.x +  (spriteballXVel * spriteballMovementSpeed));
+            ballRect.y = (ballRect.y +  (spriteballYVel * spriteballMovementSpeed));
 
 
             //ballRect.x = (paddleRect.x);
@@ -130,7 +130,7 @@ int main(int argc, char* args[])
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
             // text rendering stuff
-            std::string stringscore = "Score: " + std::to_string(intScore) + " BallVelX " + std::to_string(spriteballXVel);
+            std::string stringscore ="score"; //get frametime but make sure to check order of operations
             DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
 
             // end drawing frame
@@ -138,6 +138,8 @@ int main(int argc, char* args[])
             
             // find the number of milliseconds 
             int frameTime = SDL_GetTicks() - frameStart;
+
+
 
             // if we are rendering faster than FPS sleep the cpu
             if (frameTime < FRAME_DELAY)
@@ -195,12 +197,23 @@ bool ProgramIsRunning()
     if (keys[SDL_SCANCODE_RETURN])
         noInput = !noInput;
 
+    if(ballRect.x >= SCREEN_WIDTH - 20 | ballRect.x <= 0){
+        spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
+
+    }
+
+        if(ballRect.y >= SCREEN_HEIGHT - 20 | ballRect.y <= 0){
+        spriteballYVel = spriteballYVel * -1; //inverts x velocity, thus making it move in the opposite Y direction
+        
+
+    }
+
     floatScore ++;
     intScore = floatScore / 60 ;
 
-  //  while(noInput){
-  //      paddleRect.x = ballRect.x; //this code crashes the game, ask why later
-  //  }
+
+    paddleRect.x = ballRect.x;
+
 
     while (SDL_PollEvent(&event))
     {

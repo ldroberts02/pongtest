@@ -3,6 +3,9 @@
 #include <SDL_ttf.h>
 #include <iostream>
 #include <stdio.h>
+#include <string>
+using namespace std;
+
 
 const int FPS = 60;
 const int FRAME_DELAY = 1000/FPS;
@@ -28,14 +31,18 @@ float paddleXVel = 1.0f;
 float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
 
+int intScore = 0;
+int intscoresegment = 0;
+float floatScore = 0.0f;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
-float spriteballMovementSpeed = 10.0f;
+float spriteballMovementSpeed = 2.0f;
 
 SDL_Rect paddleRect;
 SDL_Rect ballRect;
 
+bool noInput = true;
 bool LoadFiles();
 void FreeFiles();
 bool ProgramIsRunning();
@@ -47,19 +54,18 @@ bool RectsOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 int main(int argc, char* args[])
 {
-    std::cout << "Hello World" << std::endl;
+    std::cout << "test" << std::endl; //prints to terminal
 
     paddleRect.x = (SCREEN_WIDTH / 3);
-    //paddleRect.y = 250;
     paddleRect.w = 128;
     paddleRect.h = 32;
 
     ballRect.x = (SCREEN_WIDTH /2);
     ballRect.y = (SCREEN_HEIGHT / 2);
-    ballRect.w = 32;
-    ballRect.h = 32;
+    ballRect.w = 20;
+    ballRect.h = 20;
 
-    if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+    if (SDL_Init(SDL_INIT_EVERYTHING) < 0) //default initialization stuff
     {
         std::cout << "SDL failed to init!" << std::endl;
         SDL_Quit();
@@ -89,7 +95,7 @@ int main(int argc, char* args[])
 
         //play sound
         //Mix_PlayChannel(-1,hitSound,0);
-        Mix_PlayMusic(backGroundMusic, -1);
+       // Mix_PlayMusic(backGroundMusic, -1); //UNCOMMENT FOR MUSIC
 
 
         while(ProgramIsRunning())
@@ -104,25 +110,36 @@ int main(int argc, char* args[])
             paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
             paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
 
-            //paddleRect.x = (SCREEN_WIDTH / 2);
-            paddleRect.y = (SCREEN_HEIGHT - 48); // paddle does not need to move vertically, so this is used instead of the old code
+            paddleRect.y = (SCREEN_HEIGHT - 32); // paddle does not need to move vertically, so this is used instead
 
-            /*paddleRect.y = (paddleRect.y + (paddleRect.h/2.0f) < SCREEN_HEIGHT) ? (paddleRect.y + (inputDirectionY * movementSpeed)) : -(paddleRect.h/2.0f) + 1;
-            paddleRect.y = (paddleRect.y > -(paddleRect.h/2.0f)) ? paddleRect.y : SCREEN_HEIGHT - (paddleRect.h/2.0f) - 1; */
+            ballRect.x = (ballRect.x +  (spriteballXVel * spriteballMovementSpeed));
+            ballRect.y = (ballRect.y +  (spriteballYVel * spriteballMovementSpeed));
+
+
             //ballRect.x = (paddleRect.x);
             //ballRect.y = (paddleRect.y - 200);
+
             DrawImage(sprite, backBuffer, paddleRect.x, paddleRect.y);
 
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
-            // font
-            DrawText(backBuffer, "Demo", 100, 100, gameFont, 255u, 255u, 255u);
+            DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
-            // end draw frame
+            DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
+
+            DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
+
+            // text rendering stuff
+            std::string stringscore ="score"; //get frametime but make sure to check order of operations
+            DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
+
+            // end drawing frame
             SDL_UpdateWindowSurface(window);
             
             // find the number of milliseconds 
             int frameTime = SDL_GetTicks() - frameStart;
+
+
 
             // if we are rendering faster than FPS sleep the cpu
             if (frameTime < FRAME_DELAY)
@@ -171,15 +188,32 @@ bool ProgramIsRunning()
 
     if (keys[SDL_SCANCODE_LEFT])
         inputDirectionX = -1.0f;
-    
+
+
     if (keys[SDL_SCANCODE_RIGHT])
         inputDirectionX = 1.0f;
+
     
-    //if (keys[SDL_SCANCODE_UP])
-    //    inputDirectionY = -1.0f;
-    
-    //if (keys[SDL_SCANCODE_DOWN])
-    //    inputDirectionY = 1.0f;
+    if (keys[SDL_SCANCODE_RETURN])
+        noInput = !noInput;
+
+    if(ballRect.x >= SCREEN_WIDTH - 20 | ballRect.x <= 0){
+        spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
+
+    }
+
+        if(ballRect.y >= SCREEN_HEIGHT - 20 | ballRect.y <= 0){
+        spriteballYVel = spriteballYVel * -1; //inverts x velocity, thus making it move in the opposite Y direction
+        
+
+    }
+
+    floatScore ++;
+    intScore = floatScore / 60 ;
+
+
+    paddleRect.x = ballRect.x;
+
 
     while (SDL_PollEvent(&event))
     {
@@ -235,9 +269,9 @@ void DrawImageFrame(SDL_Surface* image, SDL_Surface* destSurface,
 bool LoadFiles()
 {
     // load images
-    backGroundImage = LoadImage("assets/graphics/background.bmp");
-    sprite = LoadImage("assets/graphics/paddle.bmp");
-    spriteball = LoadImage("assets/graphics/ball.bmp");
+    backGroundImage = LoadImage("assets/graphics/new/background.bmp");
+    sprite = LoadImage("assets/graphics/new/paddle.bmp");
+    spriteball = LoadImage("assets/graphics/new/ball.bmp");
 
     if(sprite == nullptr)
         return false;

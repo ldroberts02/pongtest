@@ -94,7 +94,6 @@ int main(int argc, char* args[])
     if (LoadFiles()) {
 
         //play sound
-        Mix_PlayChannel(-1,hitSound,0);
         Mix_PlayMusic(backGroundMusic, -1); //UNCOMMENT FOR MUSIC
 
 
@@ -203,12 +202,11 @@ bool ProgramIsRunning()
 
     if(ballRect.x >= SCREEN_WIDTH - 20 || ballRect.x <= 0){ //when ball hits wall x position
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
+          Mix_PlayChannel(-1,hitSound,0);
+          std::cout << "sound effect";
     }
 
-    if(ballRect.y <= 0 || ballRect.y >= (paddleRect.y - paddleRect.h) && ballRect.y < SCREEN_HEIGHT -32 && (ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
-        spriteballYVel = spriteballYVel * -1; //inverts y velocity, thus making it move in the opposite Y direction
-        spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
-    }
+    
 
     if(ballRect.y >= SCREEN_HEIGHT - 20){
             //Set score to 0
@@ -246,6 +244,16 @@ bool ProgramIsRunning()
             }
         }
 
+    }
+
+
+
+    if(ballRect.y <= 0 || ballRect.y >= (paddleRect.y - paddleRect.h) && ballRect.y < SCREEN_HEIGHT -32 && (ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w))&& started & !paused ){ //when ball hits paddle in y position
+        spriteballYVel = spriteballYVel * -1; //inverts y velocity, thus making it move in the opposite Y direction
+         Mix_PlayChannel(-1,hitSound,0);
+        spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
+       
+        std::cout << "sound effect 2";
     }
 
 

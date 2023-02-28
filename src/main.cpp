@@ -33,6 +33,8 @@ float paddleMovementSpeed = 10.0f;
 int intScore = 0;
 int highScore = 0;
 
+int randX = rand() % 10 + 3;
+int randY = rand() % 10 + 3;
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
 float spriteballMovementSpeed = 2.0f;
@@ -110,7 +112,10 @@ int main(int argc, char* args[])
                 paddleRect.y = SCREEN_HEIGHT -32 ;
                 ballRect.x = (SCREEN_WIDTH /2) -10;
                 ballRect.y = (SCREEN_HEIGHT /2) -10;
-
+                randX = rand() % - 10 + 6;
+                spriteballXVel = (randX);
+                spriteballXVel = spriteballXVel /10;
+               // cout << "\n" + std::to_string(spriteballXVel); //prints
             }
 
             if(started & !paused){ //main loop for position calculating
@@ -203,7 +208,6 @@ bool ProgramIsRunning()
     if(ballRect.x >= SCREEN_WIDTH - 20 || ballRect.x <= 0){ //when ball hits wall x position
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
           Mix_PlayChannel(-1,hitSound,0);
-          std::cout << "sound effect";
     }
 
     
@@ -253,7 +257,6 @@ bool ProgramIsRunning()
          Mix_PlayChannel(-1,hitSound,0);
         spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
        
-        std::cout << "sound effect 2";
     }
 
 
@@ -274,9 +277,9 @@ bool ProgramIsRunning()
             if (event.key.keysym.sym == SDLK_p && event.key.repeat ==0 && started){
                 paused = !paused;
                 if(paused)
-                    cout << "Paused";
+                    cout << "\n Paused";
                 else if(!paused)
-                    cout << "UnPaused";
+                    cout << "\n UnPaused";
                 break;
             }
             if (event.key.keysym.sym == SDLK_a && event.key.repeat == 0){

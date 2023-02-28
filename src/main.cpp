@@ -96,8 +96,8 @@ int main(int argc, char* args[])
     if (LoadFiles()) {
 
         //play sound
-        //Mix_PlayChannel(-1,hitSound,0);
-       // Mix_PlayMusic(backGroundMusic, -1); //UNCOMMENT FOR MUSIC
+        Mix_PlayChannel(-1,hitSound,0);
+        Mix_PlayMusic(backGroundMusic, -1); //UNCOMMENT FOR MUSIC
 
 
         while(ProgramIsRunning())
@@ -330,12 +330,12 @@ bool LoadFiles()
 
 
     //load sounds
-    hitSound = Mix_LoadWAV("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
+    hitSound = Mix_LoadWAV("assets/sounds/sfx_sounds_impact5.wav");
 
     if(hitSound == nullptr)
         return false;
     //load music
-    backGroundMusic = Mix_LoadMUS("assets/sounds/JuhaniJunkala[RetroGameMusicPack]TitleScreen.wav");
+    backGroundMusic = Mix_LoadMUS("assets/sounds/srstrnc.wav");
     if (backGroundMusic == nullptr)
 
     return true;

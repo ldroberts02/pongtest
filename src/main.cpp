@@ -24,7 +24,6 @@ Mix_Music *backGroundMusic = nullptr;
 TTF_Font *gameFont = nullptr;
 
 float inputDirectionX = 0.0f;
-float inputDirectionY = 0.0f;
 float movementSpeed = 10.0f;
 
 float paddleXVel = 1.0f;
@@ -188,9 +187,9 @@ SDL_Surface* LoadImage(const char* fileName)
 bool ProgramIsRunning()
 {
     SDL_Event event;
+    if(isPlayer){
     inputDirectionX = 0.0f;
-    inputDirectionY = 0.0f;
-
+    }
     // input buffer
     const Uint8* keys = SDL_GetKeyboardState(NULL);
 
@@ -207,30 +206,45 @@ bool ProgramIsRunning()
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
     }
 
-        if(ballRect.y <= 0 || ballRect.y == (paddleRect.y - paddleRect.h) && (ballRect.x >= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
+    if(ballRect.y <= 0 || ballRect.y >= (paddleRect.y - paddleRect.h) && ballRect.y < SCREEN_HEIGHT -32 && (ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
         spriteballYVel = spriteballYVel * -1; //inverts y velocity, thus making it move in the opposite Y direction
-        //spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
+        spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
     }
 
-        if(ballRect.y >= SCREEN_HEIGHT - 20){
+    if(ballRect.y >= SCREEN_HEIGHT - 20){
             //Set score to 0
             //Re-init paddle and ball
-        }
-
-
+    }
 
 //start of cpu stuff
     //todo : cpu sees position of ball past halfway point, doesnt look towards top (it doesnt want to move until a certain height), then controls the input variables for itself to get to balrect
     if(!isPlayer){
-        if(ballRect.y >= (SCREEN_HEIGHT /2)){ //cpu is blind until the ball is halfway down the screen
-            if(paddleRect.x + 64 > ballRect.x){
-                inputDirectionX = - 1.0f;
+        if(started){
+            if(ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and less than pw its above it
+                if(inputDirectionX > 0 || inputDirectionX < 0){
+                    inputDirectionX * 0.1;
+                }
             }
-            else if (paddleRect.x +64  < ballRect.x){
-                inputDirectionX = 1.0f;
+            else if (ballRect.x <= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is less than px and less than pw then its to the left
+                if(inputDirectionX >= -1.0f && inputDirectionX != 0.0f){
+                    inputDirectionX = inputDirectionX - 1.0f;
+                }
+                else if (inputDirectionX == 0){
+                     inputDirectionX = inputDirectionX - 0.01f;
+                }
+            }
+            else if (ballRect.x >= paddleRect.x && ballRect.x >= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and greater than pw its to the right
+                if(inputDirectionX <= 1.0f && inputDirectionX != 0.0f){
+                inputDirectionX = inputDirectionX + 1.0f;
+                }
+                else if (inputDirectionX == 0){
+                     inputDirectionX = inputDirectionX + 0.01f;
+                }
             }
         }
+
     }
+
 
 
     while (SDL_PollEvent(&event))
@@ -238,10 +252,7 @@ bool ProgramIsRunning()
         if (event.type == SDL_QUIT)
             return false;
         if (event.type == SDL_KEYDOWN) {
-            /*if (event.key.keysym.sym == SDLK_LEFT)
-                inputDirectionX = -1.0f;
-            if (event.key.keysym.sym == SDLK_RIGHT) 
-                inputDirectionX = 1.0f;*/
+
             if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0){
                 if(!started & !paused){
                 isPlayer = true;

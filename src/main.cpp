@@ -290,7 +290,7 @@ bool LoadFiles()
 
 
     //load sounds
-    hitSound = Mix_LoadWAV("assets/sounds/srstrnc.wav");
+    hitSound = Mix_LoadWAV("assets/sounds/sfx_sounds_impact5.wav");
 
     if(hitSound == nullptr)
         return false;

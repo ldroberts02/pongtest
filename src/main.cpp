@@ -30,8 +30,8 @@ float paddleXVel = 1.0f;
 float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
 
-float floatScore = 0.0f;
-float highScore = 0.0f;
+int intScore = 0;
+int highScore = 0;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
@@ -55,7 +55,6 @@ bool RectsOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 int main(int argc, char* args[])
 {
-    std::cout << "test" << std::endl; //prints to terminal
 
     paddleRect.x = (SCREEN_WIDTH / 3);
     paddleRect.w = 128;
@@ -112,6 +111,7 @@ int main(int argc, char* args[])
                 paddleRect.y = SCREEN_HEIGHT -32 ;
                 ballRect.x = (SCREEN_WIDTH /2) -10;
                 ballRect.y = (SCREEN_HEIGHT /2) -10;
+
             }
 
             if(started & !paused){ //main loop for position calculating
@@ -137,7 +137,7 @@ int main(int argc, char* args[])
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
             // text rendering stuff
-            std::string stringscore ="score"; //get frametime but make sure to check order of operations
+            std::string stringscore ="Score " + std::to_string(intScore) + " High: " + std::to_string(highScore); //get frametime but make sure to check order of operations
             DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
 
             // end drawing frame
@@ -145,9 +145,9 @@ int main(int argc, char* args[])
             
             // find the number of milliseconds 
             int frameTime = SDL_GetTicks() - frameStart;
-
-
-
+            if(started && !paused){
+            intScore = (frameTime + intScore);
+            }
             // if we are rendering faster than FPS sleep the cpu
             if (frameTime < FRAME_DELAY)
                 SDL_Delay(FRAME_DELAY - frameTime);
@@ -192,14 +192,13 @@ bool ProgramIsRunning()
     }
     // input buffer
     const Uint8* keys = SDL_GetKeyboardState(NULL);
-
+    if(isPlayer){
     if (keys[SDL_SCANCODE_LEFT])
         inputDirectionX = -1.0f;
 
-
     if (keys[SDL_SCANCODE_RIGHT])
         inputDirectionX = 1.0f;
-
+    }
 
 
     if(ballRect.x >= SCREEN_WIDTH - 20 || ballRect.x <= 0){ //when ball hits wall x position
@@ -214,6 +213,10 @@ bool ProgramIsRunning()
     if(ballRect.y >= SCREEN_HEIGHT - 20){
             //Set score to 0
             //Re-init paddle and ball
+            highScore = (isPlayer) ? intScore : highScore;
+            intScore = 0.0;
+            started = false;
+            paused = false;
     }
 
 //start of cpu stuff

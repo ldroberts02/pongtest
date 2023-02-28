@@ -206,55 +206,43 @@ bool ProgramIsRunning()
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
     }
 
-        if(ballRect.y <= 0 || ballRect.y == (paddleRect.y - paddleRect.h) && (ballRect.x >= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
+    if(ballRect.y <= 0 || ballRect.y >= (paddleRect.y - paddleRect.h) && ballRect.y < SCREEN_HEIGHT -32 && (ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
         spriteballYVel = spriteballYVel * -1; //inverts y velocity, thus making it move in the opposite Y direction
-        //spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
+        spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
     }
 
-        if(ballRect.y >= SCREEN_HEIGHT - 20){
+    if(ballRect.y >= SCREEN_HEIGHT - 20){
             //Set score to 0
             //Re-init paddle and ball
-        }
+    }
 
-
-    cout << inputDirectionX << endl;
 //start of cpu stuff
     //todo : cpu sees position of ball past halfway point, doesnt look towards top (it doesnt want to move until a certain height), then controls the input variables for itself to get to balrect
     if(!isPlayer){
-        if(started){ //cpu is slower until the ball is close
-            if(ballRect.x >= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and less than pw its above it
-                if(inputDirectionX != 0){
-                    inputDirectionX = 0;
+        if(started){
+            if(ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and less than pw its above it
+                if(inputDirectionX > 0 || inputDirectionX < 0){
+                    inputDirectionX * 0.1;
                 }
-            else if(inputDirectionX > -0.001f && inputDirectionX < 0.001f){
-                inputDirectionX = 0;
-            }
             }
             else if (ballRect.x <= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is less than px and less than pw then its to the left
                 if(inputDirectionX >= -1.0f && inputDirectionX != 0.0f){
-                    inputDirectionX = inputDirectionX - .02f;
+                    inputDirectionX = inputDirectionX - 1.0f;
                 }
                 else if (inputDirectionX == 0){
-                     inputDirectionX = inputDirectionX - 0.1f;
+                     inputDirectionX = inputDirectionX - 0.01f;
                 }
             }
             else if (ballRect.x >= paddleRect.x && ballRect.x >= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and greater than pw its to the right
                 if(inputDirectionX <= 1.0f && inputDirectionX != 0.0f){
-                inputDirectionX = inputDirectionX + .02f;
+                inputDirectionX = inputDirectionX + 1.0f;
                 }
                 else if (inputDirectionX == 0){
-                     inputDirectionX = inputDirectionX + 0.1f;
+                     inputDirectionX = inputDirectionX + 0.01f;
                 }
             }
         }
-       // else if (ballRect.y <= SCREEN_HEIGHT /1.5 ){
-       //     if(paddleRect.x + 64 > ballRect.x){
-       //         inputDirectionX = -0.2f;
-       //     }
-      //      if(paddleRect.x + 64 < ballRect.x){
-      //          inputDirectionX = 0.2f;
-      //      }
-      //  }
+
     }
 
 

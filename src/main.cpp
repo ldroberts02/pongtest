@@ -31,9 +31,8 @@ float paddleXVel = 1.0f;
 float paddleYVel = 1.0f;
 float paddleMovementSpeed = 10.0f;
 
-int intScore = 0;
-int intscoresegment = 0;
 float floatScore = 0.0f;
+float highScore = 0.0f;
 
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
@@ -42,7 +41,10 @@ float spriteballMovementSpeed = 2.0f;
 SDL_Rect paddleRect;
 SDL_Rect ballRect;
 
-bool noInput = true;
+bool isPlayer = true;
+bool started = false;
+bool paused = false;
+
 bool LoadFiles();
 void FreeFiles();
 bool ProgramIsRunning();
@@ -105,20 +107,26 @@ int main(int argc, char* args[])
             // reset the back buffer with the back ground
             SDL_BlitSurface(backGroundImage, NULL, backBuffer, NULL);
 
-            // draw the image
-            paddleRect.x = (paddleRect.x + (inputDirectionX * movementSpeed));
-            paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
-            paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
+            //initial setup of positions
+            if(!started){
+                paddleRect.x = (SCREEN_WIDTH /2) - 64;
+                paddleRect.y = SCREEN_HEIGHT -32 ;
+                ballRect.x = (SCREEN_WIDTH /2) -10;
+                ballRect.y = (SCREEN_HEIGHT /2) -10;
+            }
 
-            paddleRect.y = (SCREEN_HEIGHT - 32); // paddle does not need to move vertically, so this is used instead
+            if(started & !paused){ //main loop for position calculating
+                paddleRect.x = (paddleRect.x + (inputDirectionX * movementSpeed));
+                paddleRect.x = (paddleRect.x + (paddleRect.w) < SCREEN_WIDTH) ? (paddleRect.x) : SCREEN_WIDTH - paddleRect.w;
+                paddleRect.x = (paddleRect.x > 0) ? paddleRect.x : 0;
 
-            ballRect.x = (ballRect.x +  (spriteballXVel * spriteballMovementSpeed));
-            ballRect.y = (ballRect.y +  (spriteballYVel * spriteballMovementSpeed));
+                paddleRect.y = (SCREEN_HEIGHT - 32); // paddle does not need to move vertically, so this is used instead
 
+                ballRect.x = (ballRect.x +  (spriteballXVel * spriteballMovementSpeed));
+                ballRect.y = (ballRect.y +  (spriteballYVel * spriteballMovementSpeed));
+            }
 
-            //ballRect.x = (paddleRect.x);
-            //ballRect.y = (paddleRect.y - 200);
-
+            // draw the images
             DrawImage(sprite, backBuffer, paddleRect.x, paddleRect.y);
 
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
@@ -193,16 +201,15 @@ bool ProgramIsRunning()
     if (keys[SDL_SCANCODE_RIGHT])
         inputDirectionX = 1.0f;
 
-    
-    if (keys[SDL_SCANCODE_RETURN])
-        noInput = !noInput;
 
-    if(ballRect.x >= SCREEN_WIDTH - 20 | ballRect.x <= 0){
+
+    if(ballRect.x >= SCREEN_WIDTH - 20 || ballRect.x <= 0){ //when ball hits wall x position
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
     }
 
-        if(ballRect.y <= 0 | ballRect.y == (paddleRect.y - paddleRect.h)){
-        spriteballYVel = spriteballYVel * -1; //inverts x velocity, thus making it move in the opposite Y direction
+        if(ballRect.y <= 0 || ballRect.y == (paddleRect.y - paddleRect.h) && (ballRect.x >= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w))){ //when ball hits paddle in y position
+        spriteballYVel = spriteballYVel * -1; //inverts y velocity, thus making it move in the opposite Y direction
+        //spriteballMovementSpeed = spriteballMovementSpeed + 0.25 ;
     }
 
         if(ballRect.y >= SCREEN_HEIGHT - 20){
@@ -210,11 +217,20 @@ bool ProgramIsRunning()
             //Re-init paddle and ball
         }
 
-    floatScore ++;
-    intScore = floatScore / 60 ;
 
 
-    paddleRect.x = ballRect.x;
+//start of cpu stuff
+    //todo : cpu sees position of ball past halfway point, doesnt look towards top (it doesnt want to move until a certain height), then controls the input variables for itself to get to balrect
+    if(!isPlayer){
+        if(ballRect.y >= (SCREEN_HEIGHT /2)){ //cpu is blind until the ball is halfway down the screen
+            if(paddleRect.x + 64 > ballRect.x){
+                inputDirectionX = - 1.0f;
+            }
+            else if (paddleRect.x +64  < ballRect.x){
+                inputDirectionX = 1.0f;
+            }
+        }
+    }
 
 
     while (SDL_PollEvent(&event))
@@ -224,17 +240,39 @@ bool ProgramIsRunning()
         if (event.type == SDL_KEYDOWN) {
             /*if (event.key.keysym.sym == SDLK_LEFT)
                 inputDirectionX = -1.0f;
-            if (event.key.keysym.sym == SDLK_RIGHT)
+            if (event.key.keysym.sym == SDLK_RIGHT) 
                 inputDirectionX = 1.0f;*/
+            if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0){
+                if(!started & !paused){
+                isPlayer = true;
+                started = true;
+                break;
+                }
+            }
+            if (event.key.keysym.sym == SDLK_p && event.key.repeat ==0 && started){
+                paused = !paused;
+                if(paused)
+                    cout << "Paused";
+                else if(!paused)
+                    cout << "UnPaused";
+                break;
+            }
+            if (event.key.keysym.sym == SDLK_a && event.key.repeat == 0){
+                if(!started & !paused){
+                    isPlayer = false;
+                    started = true;
+                    break;
+                }
+            }
         }
+    
+
         if (event.type == SDL_MOUSEMOTION) {
             float x = event.motion.x;
             float y = event.motion.y;
         }
     }
     
-
-
 
 
 

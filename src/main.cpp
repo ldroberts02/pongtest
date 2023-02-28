@@ -58,7 +58,7 @@ int main(int argc, char* args[])
 
     paddleRect.x = (SCREEN_WIDTH / 3);
     paddleRect.w = 128;
-    paddleRect.h = 32;
+    paddleRect.h = 16;
 
     ballRect.x = (SCREEN_WIDTH /2);
     ballRect.y = (SCREEN_HEIGHT / 2);
@@ -199,14 +199,16 @@ bool ProgramIsRunning()
 
     if(ballRect.x >= SCREEN_WIDTH - 20 | ballRect.x <= 0){
         spriteballXVel = spriteballXVel * -1; //inverts x velocity, thus making it move in the opposite X direction
-
     }
 
-        if(ballRect.y >= SCREEN_HEIGHT - 20 | ballRect.y <= 0){
+        if(ballRect.y <= 0 | ballRect.y == (paddleRect.y - paddleRect.h)){
         spriteballYVel = spriteballYVel * -1; //inverts x velocity, thus making it move in the opposite Y direction
-        
-
     }
+
+        if(ballRect.y >= SCREEN_HEIGHT - 20){
+            //Set score to 0
+            //Re-init paddle and ball
+        }
 
     floatScore ++;
     intScore = floatScore / 60 ;

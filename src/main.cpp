@@ -10,7 +10,7 @@ using namespace std;
 const int FPS = 60;
 const int FRAME_DELAY = 1000/FPS;
 const int SCREEN_WIDTH = 600;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_HEIGHT = 600;
 
 SDL_Window *window = nullptr;
 SDL_Surface *sprite = nullptr;
@@ -34,7 +34,7 @@ int intScore = 0;
 int highScore = 0;
 
 int randX = rand() % 10 + 3;
-int randY = rand() % 10 + 3;
+int randneg = rand() % 2;
 float spriteballXVel = 1.0f;
 float spriteballYVel = 1.0f;
 float spriteballMovementSpeed = 2.0f;
@@ -57,7 +57,6 @@ bool RectsOverlap(SDL_Rect rect1, SDL_Rect rect2);
 
 int main(int argc, char* args[])
 {
-
     paddleRect.x = (SCREEN_WIDTH / 3);
     paddleRect.w = 128;
     paddleRect.h = 16;
@@ -84,7 +83,7 @@ int main(int argc, char* args[])
 
     // create window
     window = SDL_CreateWindow(
-        "Programming Test",
+        "Pong Game",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH,
@@ -96,7 +95,7 @@ int main(int argc, char* args[])
     if (LoadFiles()) {
 
         //play sound
-        Mix_PlayMusic(backGroundMusic, -1); //UNCOMMENT FOR MUSIC
+        Mix_PlayMusic(backGroundMusic, -1);
 
 
         while(ProgramIsRunning())
@@ -113,9 +112,12 @@ int main(int argc, char* args[])
                 ballRect.x = (SCREEN_WIDTH /2) -10;
                 ballRect.y = (SCREEN_HEIGHT /2) -10;
                 randX = rand() % - 10 + 6;
+                randneg =rand() % 2;
                 spriteballXVel = (randX);
                 spriteballXVel = spriteballXVel /10;
-               // cout << "\n" + std::to_string(spriteballXVel); //prints
+                 if(randneg == 1){
+                    spriteballXVel = spriteballXVel * -1;
+                }
             }
 
             if(started & !paused){ //main loop for position calculating
@@ -129,7 +131,6 @@ int main(int argc, char* args[])
                 ballRect.y = (ballRect.y +  (spriteballYVel * spriteballMovementSpeed));
             }
 
-            // draw the images
             DrawImage(sprite, backBuffer, paddleRect.x, paddleRect.y);
 
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
@@ -141,8 +142,12 @@ int main(int argc, char* args[])
             DrawImage(spriteball, backBuffer, ballRect.x, ballRect.y);
 
             // text rendering stuff
-            std::string stringscore ="Score " + std::to_string(intScore) + " High: " + std::to_string(highScore); //get frametime but make sure to check order of operations
+            std::string stringscore ="Score " + std::to_string(intScore); //get frametime but make sure to check order of operations
             DrawText(backBuffer, stringscore.c_str(), 28, 28, gameFont, 255u, 255u, 255u);
+            std::string stringHighscore = "High Score: " + std::to_string(highScore);
+            if(!started){
+                DrawText(backBuffer, stringHighscore.c_str(), 28, 56, gameFont, 255u, 255u, 255u);
+            }
 
             // end drawing frame
             SDL_UpdateWindowSurface(window);
@@ -158,11 +163,10 @@ int main(int argc, char* args[])
         }
     }
 
-    FreeFiles();
 
+    FreeFiles();
     SDL_DestroyWindow(window);
     SDL_Quit();
-
     return 0;
 }
 
@@ -219,15 +223,15 @@ bool ProgramIsRunning()
             intScore = 0.0;
             started = false;
             paused = false;
+            spriteballMovementSpeed = 2.0f;
     }
 
 //start of cpu stuff
-    //todo : cpu sees position of ball past halfway point, doesnt look towards top (it doesnt want to move until a certain height), then controls the input variables for itself to get to balrect
     if(!isPlayer){
         if(started){
             if(ballRect.x >= paddleRect.x -20 && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is greater than px and less than pw its above it
                 if(inputDirectionX > 0 || inputDirectionX < 0){
-                    inputDirectionX * 0.1;
+                    inputDirectionX = inputDirectionX * 0.9f;
                 }
             }
             else if (ballRect.x <= paddleRect.x && ballRect.x <= (paddleRect.x + paddleRect.w)){ //if ball is less than px and less than pw then its to the left
@@ -267,6 +271,10 @@ bool ProgramIsRunning()
             return false;
         if (event.type == SDL_KEYDOWN) {
 
+            if(event.key.keysym.sym == SDLK_ESCAPE){
+                break;
+            }
+
             if (event.key.keysym.sym == SDLK_SPACE && event.key.repeat == 0){
                 if(!started & !paused){
                 isPlayer = true;
@@ -287,6 +295,11 @@ bool ProgramIsRunning()
                     isPlayer = false;
                     started = true;
                     break;
+                }
+            }
+            if (event.key.keysym.sym == SDLK_r && event.key.repeat ==0){
+                if(started){
+                    ballRect.y = SCREEN_HEIGHT +5;
                 }
             }
         }
@@ -334,9 +347,9 @@ void DrawImageFrame(SDL_Surface* image, SDL_Surface* destSurface,
 bool LoadFiles()
 {
     // load images
-    backGroundImage = LoadImage("assets/graphics/new/background.bmp");
-    sprite = LoadImage("assets/graphics/new/paddle.bmp");
-    spriteball = LoadImage("assets/graphics/new/ball.bmp");
+    backGroundImage = LoadImage("assets/graphics/background.bmp");
+    sprite = LoadImage("assets/graphics/paddle.bmp");
+    spriteball = LoadImage("assets/graphics/ball.bmp");
 
     if(sprite == nullptr)
         return false;
